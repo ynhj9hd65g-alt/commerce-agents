@@ -115,6 +115,36 @@ async def test_disclosure_recommends_ideal_tire_width_before_any_tire_is_picked(
     assert "255" in row.value and "285" in row.value
 
 
+async def test_disclosure_recommends_a_specific_in_stock_staff_pick(backend, session):
+    """The Hayate 265/35R18 (265mm) is the only in-stock 18-inch tire whose width is
+    ideal for the Kaiten's 9.5-inch front width."""
+    disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-18x95-22-bronze")
+    assert disclosure is not None
+    row = next(r for r in disclosure.rows if r.label == "Staff-recommended tire")
+    assert "Hayate" in row.value and "265mm" in row.value
+    assert "ideal" in row.note.lower()
+
+
+async def test_disclosure_flags_when_the_ideal_pick_is_out_of_stock(backend, session):
+    """The Kaiten's 19x10 rear wants a 265-295mm tire; the only catalog tire in that band
+    at 19 inches (the Kumo TR-Z 265/35R19) is out of stock, so the recommendation should
+    name the in-stock alternative's shortcoming and still mention what would be ideal."""
+    disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-19x10-35-bronze")
+    assert disclosure is not None
+    row = next(r for r in disclosure.rows if r.label == "Staff-recommended tire")
+    assert "Raiden" in row.value
+    assert "Kumo" in row.note and "out of stock" in row.note.lower()
+
+
+async def test_disclosure_has_no_staff_pick_when_no_tire_shares_the_diameter(backend, session):
+    """No 14-inch tire exists in this catalog, so there is nothing honest to recommend."""
+    disclosure = await backend.get_disclosure(session, "wheel-genroku-r8-14x7-0-silver")
+    assert disclosure is not None
+    assert not any(r.label == "Staff-recommended tire" for r in disclosure.rows)
+    # The abstract ideal-width guidance still applies even with nothing to point to.
+    assert any(r.label == "Ideal tire width for this wheel" for r in disclosure.rows)
+
+
 async def test_disclosure_flags_a_diameter_mismatch_between_cart_items(backend, session):
     """The user's own example: an 18-inch wheel with a 17-inch tire in the cart."""
     await backend.add_to_cart(session, "wheel-kaiten-sf01-18x95-22-bronze", 1)

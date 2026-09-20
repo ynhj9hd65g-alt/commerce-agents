@@ -4,11 +4,13 @@
 import pytest
 
 from wheels.api.fitment import (
+    TireCandidate,
     check_fitment,
     ideal_tire_widths_for_wheel,
     parse_tire_size,
     parse_wheel_diameter_in,
     parse_wheel_width_in,
+    recommend_tire,
     rim_width_range_for_tire,
     width_fit,
 )
@@ -96,3 +98,41 @@ def test_check_fitment_acceptable_but_not_ideal_states_the_ideal_range():
 def test_check_fitment_returns_none_for_incomplete_records():
     assert check_fitment({}, {"size": "225/45R17"}) is None
     assert check_fitment({"diameter": '18"', "width": '9.5"'}, {}) is None
+
+
+_WHEEL_18X95 = {"diameter": '18"', "width": '9.5"'}
+
+
+def test_recommend_tire_picks_the_ideal_in_stock_match():
+    candidates = [
+        TireCandidate("t-wrong-diameter", "Wrong diameter", {"size": "225/45R17"}, True),
+        TireCandidate("t-too-narrow", "Too narrow", {"size": "225/40R18"}, True),
+        TireCandidate("t-ideal", "Ideal width", {"size": "265/40R18"}, True),
+    ]
+    pick = recommend_tire(_WHEEL_18X95, candidates)
+    assert pick is not None
+    assert pick.product_id == "t-ideal"
+    assert pick.verdict.width_fit == "ideal"
+    assert pick.better_out_of_stock is None
+
+
+def test_recommend_tire_prefers_in_stock_over_a_better_out_of_stock_match():
+    candidates = [
+        TireCandidate("t-acceptable-in-stock", "In stock", {"size": "245/40R18"}, True),
+        TireCandidate("t-ideal-out-of-stock", "Backordered", {"size": "265/40R18"}, False),
+    ]
+    pick = recommend_tire(_WHEEL_18X95, candidates)
+    assert pick is not None
+    assert pick.product_id == "t-acceptable-in-stock"
+    assert pick.better_out_of_stock is not None
+    assert pick.better_out_of_stock.product_id == "t-ideal-out-of-stock"
+
+
+def test_recommend_tire_none_when_nothing_shares_the_wheels_diameter():
+    candidates = [TireCandidate("t-17", "Wrong diameter", {"size": "225/45R17"}, True)]
+    assert recommend_tire(_WHEEL_18X95, candidates) is None
+
+
+def test_recommend_tire_none_when_the_only_same_diameter_tire_is_out_of_stock():
+    candidates = [TireCandidate("t-18-oos", "Out of stock", {"size": "265/40R18"}, False)]
+    assert recommend_tire(_WHEEL_18X95, candidates) is None

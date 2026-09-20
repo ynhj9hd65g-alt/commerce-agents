@@ -39,6 +39,7 @@ FastAPI app, follow `shopping-agent/runtime-agent-sdk/main.py`'s pattern (`make_
 5. Who's your supplier for the Kaiten, and why does it take two weeks?
 6. I've got a Hakosuka — what fits it?
 7. I want the Kaiten 18x9.5 up front — what tire width should I run, and does the Raiden 235/40R18 work?
+8. What tire should I run on the Kaiten 19x10 rear?
 
 A good run: turn 1 returns the three 5x114.3 wheels (Kaiten, Raion, Kessho — not the 5x100
 Meisho, 4x100 Hachiroku, or 4x114.3 Genroku) each carrying a `fitment_check` note; turn 2
@@ -53,7 +54,9 @@ returns only the Genroku R8, sized for the Hakosuka/Kenmeri's own 66.1mm hub rat
 73.1mm-bore wheels the rest of the catalog is built around; turn 7 states the ideal band
 (255-285mm) for the Kaiten's 9.5" width and says the 235mm Raiden is outside it — narrower
 than recommended, not merely a preference — rather than confirming it fits because the
-diameters happen to match.
+diameters happen to match; turn 8 names the Raiden PS-01 245/35R19 as the pick (the only
+in-stock 19" tire) while volunteering that the Kumo TR-Z 265/35R19 would be the truly ideal
+width and is only unavailable, not a worse choice.
 
 ## What is specific to this example
 
@@ -77,6 +80,16 @@ diameters happen to match.
   marginal fit, the ideal range to aim for instead. `test_fitment.py` covers the size math
   directly; `test_mock_wheels.py` covers the cart-aware disclosure rows, including the
   user's own example (an 18" wheel with a 17" tire).
+- **A staff pick, not just a computed range.** A published range is useful, but a fitment
+  guide worth the name (Apex Wheels' chassis-specific guides are the model here) names a
+  specific size, not just a band, and says so honestly when the ideal one isn't in stock.
+  `recommend_tire` ranks every same-diameter tire in the catalog — ideal beats acceptable
+  beats not-recommended, ties broken by distance from the ideal band's center — and prefers
+  an in-stock one; when a better match exists but is backordered, the recommendation still
+  names it (`better_out_of_stock`) rather than silently picking whatever's on the shelf. A
+  wheel with no same-diameter tire in the catalog at all (the Genroku's 14" size) gets no
+  staff pick and falls back to the abstract ideal-width band alone — there's nothing honest
+  to point at.
 - `api/agent_config.py`: `domain_search_notes` documents the `vehicle` search attribute and
   the fitment fields the model should read off each result rather than assume, and states
   plainly that sourcing (supplier, cost, why a lead time is what it is) is nothing the

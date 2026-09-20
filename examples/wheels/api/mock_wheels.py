@@ -63,7 +63,13 @@ from shopping_agent import (
     UserPreferences,
 )
 
-from .fitment import check_fitment, ideal_tire_widths_for_wheel, parse_wheel_width_in
+from .fitment import (
+    TireCandidate,
+    check_fitment,
+    ideal_tire_widths_for_wheel,
+    parse_wheel_width_in,
+    recommend_tire,
+)
 
 DATA_DIR = example_data_dir(__file__)
 
@@ -274,13 +280,21 @@ class MockWheels(StorefrontBackend):
     # Disclosures: the fitment facts box
     # ------------------------------------------------------------------
 
+    def _tire_candidates(self) -> list[TireCandidate]:
+        return [
+            TireCandidate(v.product_id, v.title, v.option_values, v.in_stock)
+            for v in self.variants.values()
+            if v.category == "tire"
+        ]
+
     def _cart_fitment_rows(
         self, session: ShoppingSessionContext, product: ProductDetails
     ) -> list[DisclosureRow]:
-        """Fitment facts that depend on what else is in the cart, plus a standing
-        recommendation for a wheel on its own: the tire widths this catalog considers
-        ideal for it, so a customer hears the right size before they've picked a tire at
-        all, not only once they've picked a mismatched one."""
+        """Fitment facts that depend on what else is in the cart, plus two standing
+        recommendations for a wheel on its own: the tire widths this catalog considers
+        ideal for it, and a specific staff pick from the current catalog (not just the
+        computed range), so a customer hears the right size before they've picked a tire
+        at all, not only once they've picked a mismatched one."""
         rows: list[DisclosureRow] = []
         if product.category == "wheel":
             wheel_width = parse_wheel_width_in(product.option_values)
@@ -292,6 +306,22 @@ class MockWheels(StorefrontBackend):
                     else "narrower or wider than this catalog's tires"
                 )
                 rows.append(DisclosureRow(label="Ideal tire width for this wheel", value=value))
+
+            recommendation = recommend_tire(product.option_values, self._tire_candidates())
+            if recommendation is not None:
+                note = recommendation.verdict.summary
+                if recommendation.better_out_of_stock is not None:
+                    note += (
+                        f" {recommendation.better_out_of_stock.title} would be a better width "
+                        "match but is currently out of stock."
+                    )
+                rows.append(
+                    DisclosureRow(
+                        label="Staff-recommended tire",
+                        value=f"{recommendation.title} ({recommendation.verdict.tire_width_mm}mm)",
+                        note=note,
+                    )
+                )
             opposite_category = "tire"
         elif product.category == "tire":
             opposite_category = "wheel"

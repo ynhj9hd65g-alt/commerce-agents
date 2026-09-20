@@ -17,6 +17,7 @@ default to flag against, not a substitute for the specific tire's own spec sheet
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import astuple, dataclass
 from typing import Literal
 
@@ -185,4 +186,78 @@ def check_fitment(
         width_fit=fit,
         ideal_tire_width_mm=ideal_range,
         summary=summary,
+    )
+
+
+_FIT_RANK: dict[WidthFit, int] = {"ideal": 0, "acceptable": 1, "not_recommended": 2}
+
+
+@dataclass(frozen=True)
+class TireCandidate:
+    product_id: str
+    title: str
+    option_values: dict[str, str]
+    in_stock: bool
+
+
+@dataclass(frozen=True)
+class TireRecommendation:
+    """A staff pick: the best-fitting *in-stock* tire for a wheel, in the spirit of a
+    fitment guide's "here's what we'd actually put on this" call rather than only a
+    computed range. ``better_out_of_stock`` names a tire that would rank higher — a
+    closer or truly ideal width match — when the catalog carries one, so the answer is
+    "here's what we have, and here's what would be ideal if it weren't backordered"
+    rather than silently recommending the best of a poor set."""
+
+    product_id: str
+    title: str
+    verdict: FitmentVerdict
+    better_out_of_stock: TireRecommendation | None = None
+
+
+def _distance_from_ideal_center(wheel_width_in: float, tire_width_mm: int) -> float:
+    band = rim_width_range_for_tire(tire_width_mm)
+    center = (band.ideal_low_in + band.ideal_high_in) / 2
+    return abs(wheel_width_in - center)
+
+
+def recommend_tire(
+    wheel_option_values: dict[str, str], candidates: Sequence[TireCandidate]
+) -> TireRecommendation | None:
+    """The best same-diameter tire for this wheel among ``candidates``, preferring an
+    in-stock one; None when nothing in ``candidates`` shares the wheel's diameter at all
+    (nothing to recommend, rather than a wrong-diameter guess)."""
+    wheel_width = parse_wheel_width_in(wheel_option_values)
+    if wheel_width is None:
+        return None
+
+    def sort_key(pair: tuple[TireCandidate, FitmentVerdict]) -> tuple[int, float]:
+        _candidate, verdict = pair
+        return (
+            _FIT_RANK[verdict.width_fit],
+            _distance_from_ideal_center(wheel_width, verdict.tire_width_mm),
+        )
+
+    scored: list[tuple[TireCandidate, FitmentVerdict]] = []
+    for candidate in candidates:
+        verdict = check_fitment(wheel_option_values, candidate.option_values)
+        if verdict is not None and verdict.diameter_match:
+            scored.append((candidate, verdict))
+    if not scored:
+        return None
+    scored.sort(key=sort_key)
+
+    in_stock = [pair for pair in scored if pair[0].in_stock]
+    if not in_stock:
+        return None
+    best_candidate, best_verdict = in_stock[0]
+
+    better_out_of_stock: TireRecommendation | None = None
+    best_key = sort_key(in_stock[0])
+    for candidate, verdict in scored:
+        if not candidate.in_stock and sort_key((candidate, verdict)) < best_key:
+            better_out_of_stock = TireRecommendation(candidate.product_id, candidate.title, verdict)
+            break  # scored is sorted best-first, so the first such hit is the best one
+    return TireRecommendation(
+        best_candidate.product_id, best_candidate.title, best_verdict, better_out_of_stock
     )
