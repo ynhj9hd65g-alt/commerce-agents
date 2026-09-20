@@ -1,0 +1,22 @@
+{
+  "_comment": "Internal cost and supplier data. Deliberately kept out of catalog.json: no StorefrontBackend method the shopping agent can call reads this file, so a customer can never learn what a variant costs ACME Wheels or who supplies it. MockWheels.unit_margin() is a plain method (not a registered tool) for internal/ops use only, mirroring how examples/retail/api/mock_retail.py keeps price_intelligence() off the agent-facing surface. default_markup_pct is cost-plus (price = cost * (1 + markup)); each variant's own cost is authored directly below rather than derived, so it can vary by supplier without recomputing the whole catalog.",
+  "default_markup_pct": 38,
+  "variants": {
+    "wheel-kaiten-sf01-18x95-22-bronze": {"cost": 206.50, "supplier": "Osaka Wheel Supply"},
+    "wheel-kaiten-sf01-18x95-22-gunmetal": {"cost": 206.50, "supplier": "Osaka Wheel Supply"},
+    "wheel-kaiten-sf01-19x10-35-bronze": {"cost": 228.25, "supplier": "Osaka Wheel Supply"},
+    "wheel-kaiten-sf01-19x10-35-gunmetal": {"cost": 228.25, "supplier": "Osaka Wheel Supply"},
+    "wheel-raion-gt3-18x95-12-satinblack": {"cost": 449.25, "supplier": "Kansai Wheel Trading"},
+    "wheel-raion-gt3-18x105-15-satinblack": {"cost": 478.25, "supplier": "Kansai Wheel Trading"},
+    "wheel-meisho-rpf-17x9-35-gunmetal": {"cost": 137.00, "supplier": "Osaka Wheel Supply"},
+    "wheel-meisho-rpf-17x9-35-mattblack": {"cost": 137.00, "supplier": "Osaka Wheel Supply"},
+    "wheel-hachiroku-classic-14x7-25-gold": {"cost": 105.00, "supplier": "Kansai Wheel Trading"},
+    "wheel-hachiroku-classic-15x8-20-gold": {"cost": 119.50, "supplier": "Kansai Wheel Trading"},
+    "tire-raiden-ps01-225-45-17": {"cost": 137.00, "supplier": "Kansai Tire Import"},
+    "tire-raiden-ps01-235-40-18": {"cost": 158.75, "supplier": "Kansai Tire Import"},
+    "tire-raiden-ps01-245-35-19": {"cost": 180.50, "supplier": "Kansai Tire Import"},
+    "tire-kumo-trz-drift-195-50-15": {"cost": 108.00, "supplier": "Kansai Tire Import"},
+    "tire-kumo-trz-drift-225-45-17": {"cost": 115.25, "supplier": "Kansai Tire Import"},
+    "tire-kumo-trz-drift-265-35-19": {"cost": 137.00, "supplier": "Kansai Tire Import"}
+  }
+}

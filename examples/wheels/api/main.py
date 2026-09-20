@@ -1,9 +1,9 @@
 # Copyright 2026 Anthropic PBC
 # SPDX-License-Identifier: Apache-2.0
 
-"""ACME Wheels example API: a shopping agent over a fictional JDM wheel and tire dropship
-catalog. There is no merchant agent or web app in this example (see the vertical's
-README); talk to it with curl or the console.
+"""ACME Wheels example API: a shopping agent over a fictional JDM wheel and tire catalog.
+There is no merchant agent or web app in this example (see the vertical's README); talk to
+it with curl or the console.
 
     uvicorn wheels.api.main:app --app-dir examples --reload --port 8004
 

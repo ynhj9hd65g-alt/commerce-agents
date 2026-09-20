@@ -1,5 +1,5 @@
 {
-  "_comment": "Fictional JDM performance wheel & tire catalog for the ACME Wheels dropship storefront. Every brand, supplier, and figure below is invented. Variant compact rows are filled in from the family per demo_common.storefront_fixtures.load_catalog; option_values are diameter/width/offset/finish for wheels and size for tires. bolt_pattern, center_bore_mm, supplier, and lead_time_days live in each variant's attributes so search and get_disclosure can surface fitment and dropship facts without a separate lookup.",
+  "_comment": "Fictional JDM performance wheel & tire catalog for the ACME Wheels storefront. Every brand and figure below is invented. Variant compact rows are filled in from the family per demo_common.storefront_fixtures.load_catalog; option_values are diameter/width/offset/finish for wheels and size for tires. bolt_pattern, center_bore_mm, and lead_time_days live in each variant's attributes so search and get_disclosure can surface fitment facts without a separate lookup. Landed cost and supplier are intentionally NOT here: they live in data/unit_economics.json, which no StorefrontBackend method the shopping agent can reach ever reads from.",
   "store_name": "ACME Wheels",
   "products": [
     {
@@ -34,10 +34,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs; not needed on cars already bored to 73.1mm",
-            "supplier": "Osaka Wheel Supply",
-            "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)",
-            "alt_supplier_note": "Also stocked by Kansai Wheel Trading at $299/wheel, 6-8 day lead time"
+            "lead_time_days": "10-14"
           },
           "specs": {"weight_lbs": "21.4", "load_rating_kg": "690"}
         },
@@ -50,9 +47,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs; not needed on cars already bored to 73.1mm",
-            "supplier": "Osaka Wheel Supply",
-            "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "10-14"
           },
           "specs": {"weight_lbs": "21.4", "load_rating_kg": "690"}
         },
@@ -65,9 +60,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs; not needed on cars already bored to 73.1mm",
-            "supplier": "Osaka Wheel Supply",
             "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)",
             "pairs_with": "The rear half of the staggered set with wheel-kaiten-sf01-18x95-22-bronze up front"
           },
           "specs": {"weight_lbs": "23.1", "load_rating_kg": "710"}
@@ -81,9 +74,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs; not needed on cars already bored to 73.1mm",
-            "supplier": "Osaka Wheel Supply",
-            "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "10-14"
           },
           "specs": {"weight_lbs": "23.1", "load_rating_kg": "710"}
         }
@@ -106,7 +97,7 @@
         "fits": "Nissan Silvia S13/S14/S15, Skyline R32/R33 GT-R, Subaru WRX/STI 2015-2021 (5x114.3)"
       },
       "short_description": "A forged three-piece wheel with a deep-dish barrel for a wide, flush stance. Sold individually.",
-      "long_description": "The GT-3 is forged rather than cast, so it carries less unsprung weight than the SF-01 at a given width, and the bolted barrel lets a shop rebuild it after curb damage instead of replacing the whole wheel. Built to order in Osaka; longer lead time than the flow-formed line.",
+      "long_description": "The GT-3 is forged rather than cast, so it carries less unsprung weight than the SF-01 at a given width, and the bolted barrel lets a shop rebuild it after curb damage instead of replacing the whole wheel. Built to order; longer lead time than the flow-formed line.",
       "specs": {
         "warranty": "2-year structural warranty against manufacturing defects",
         "rebuildable": "Barrel and face sold separately for width changes or curb repair"
@@ -121,9 +112,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs",
-            "supplier": "Kansai Wheel Trading",
-            "lead_time_days": "21-28 (built to order)",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "21-28 (built to order)"
           },
           "specs": {"weight_lbs": "19.8", "load_rating_kg": "650"}
         },
@@ -136,9 +125,7 @@
             "bolt_pattern": "5x114.3",
             "center_bore_mm": "73.1",
             "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs",
-            "supplier": "Kansai Wheel Trading",
             "lead_time_days": "21-28 (built to order)",
-            "ships_from": "Japan (dropship)",
             "pairs_with": "The rear half of the staggered set with wheel-raion-gt3-18x95-12-satinblack up front"
           },
           "specs": {"weight_lbs": "21.2", "load_rating_kg": "680"}
@@ -174,9 +161,7 @@
             "bolt_pattern": "5x100",
             "center_bore_mm": "56.1",
             "hub_ring_required": "No; 56.1mm is a direct fit on Subaru/Toyota 86 platform hubs",
-            "supplier": "Osaka Wheel Supply",
-            "lead_time_days": "7-10",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "7-10"
           },
           "specs": {"weight_lbs": "17.6", "load_rating_kg": "610"}
         },
@@ -189,9 +174,7 @@
             "bolt_pattern": "5x100",
             "center_bore_mm": "56.1",
             "hub_ring_required": "No; 56.1mm is a direct fit on Subaru/Toyota 86 platform hubs",
-            "supplier": "Osaka Wheel Supply",
-            "lead_time_days": "7-10",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "7-10"
           },
           "specs": {"weight_lbs": "17.6", "load_rating_kg": "610"}
         }
@@ -226,9 +209,7 @@
             "bolt_pattern": "4x100",
             "center_bore_mm": "54.1",
             "hub_ring_required": "No for AE86; yes (54.1->56.1) for early NA Miata",
-            "supplier": "Kansai Wheel Trading",
-            "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "10-14"
           },
           "specs": {"weight_lbs": "13.2", "load_rating_kg": "545"}
         },
@@ -241,9 +222,7 @@
             "bolt_pattern": "4x100",
             "center_bore_mm": "54.1",
             "hub_ring_required": "No for AE86; yes (54.1->56.1) for early NA Miata",
-            "supplier": "Kansai Wheel Trading",
-            "lead_time_days": "10-14",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "10-14"
           },
           "specs": {"weight_lbs": "14.9", "load_rating_kg": "565"}
         }
@@ -261,7 +240,7 @@
       "labels": ["Street-legal", "DOT approved"],
       "attributes": {"compound": "UHP summer", "made_in": "Japan"},
       "short_description": "A DOT-approved street UHP tire; sold and priced individually.",
-      "long_description": "The everyday street tire in this catalog: DOT-approved, quiet enough to daily, and stocked in the sizes the wheels above are built around so a set of four can ship alongside a wheel order from the same dropship batch.",
+      "long_description": "The everyday street tire in this catalog: DOT-approved, quiet enough to daily, and stocked in the sizes the wheels above are built around so a set of four can ship alongside a wheel order in the same box.",
       "specs": {"treadwear": "220", "traction": "AA", "temperature": "A"},
       "variants": [
         {
@@ -273,9 +252,7 @@
             "load_index": "94",
             "speed_rating": "W",
             "dot_approved": "yes",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "5-7",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "5-7"
           }
         },
         {
@@ -287,9 +264,7 @@
             "load_index": "95",
             "speed_rating": "Y",
             "dot_approved": "yes",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "5-7",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "5-7"
           }
         },
         {
@@ -301,9 +276,7 @@
             "load_index": "93",
             "speed_rating": "Y",
             "dot_approved": "yes",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "5-7",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "5-7"
           }
         }
       ]
@@ -336,9 +309,7 @@
             "load_index": "82",
             "speed_rating": "V",
             "dot_approved": "no (competition/off-road use only)",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "7-10",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "7-10"
           }
         },
         {
@@ -350,9 +321,7 @@
             "load_index": "87",
             "speed_rating": "V",
             "dot_approved": "no (competition/off-road use only)",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "7-10",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "7-10"
           }
         },
         {
@@ -364,9 +333,7 @@
             "load_index": "90",
             "speed_rating": "V",
             "dot_approved": "no (competition/off-road use only)",
-            "supplier": "Kansai Tire Import",
-            "lead_time_days": "7-10",
-            "ships_from": "Japan (dropship)"
+            "lead_time_days": "7-10"
           }
         }
       ]

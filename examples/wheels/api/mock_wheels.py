@@ -3,13 +3,20 @@
 
 """The ACME Wheels example's ``StorefrontBackend`` over the fixtures in ``data/``: keyword
 search with vehicle-fitment filtering, per-session carts, fixture orders and policies, and
-dropship-flavored fulfillment and disclosures. An adopter wiring this vertical to a real
+lead-time-aware fulfillment and disclosures. An adopter wiring this vertical to a real
 Shopify store replaces this class with one that calls the Shopify Storefront API (catalog,
 search) and Admin API or MCP server (cart, checkout) server-side, per ``docs/backends.md``'s
 "MCP connectors" guidance; ``checkout_handoff`` would then return the cart's Shopify hosted
 checkout URL instead of the default empty list. The domain logic here — bolt-pattern
-fitment filtering, hub-ring notes, dropship lead time — carries over unchanged, since it
-lives in this class rather than in the fixtures."""
+fitment filtering, hub-ring notes, lead-time quoting — carries over unchanged, since it
+lives in this class rather than in the fixtures.
+
+Cost and supplier identity live only in ``data/unit_economics.json`` and only reach
+``unit_margin()`` below, a plain method rather than anything ``StorefrontBackend`` declares,
+so nothing in the shopping agent's tool surface (search, details, disclosures, fulfillment)
+can ever return them to a customer. This mirrors ``examples/retail/api/mock_retail.py``'s
+``price_intelligence``/``review_aspects``: internal-only helpers a portal or an ops script
+can call directly, never wired to a tool."""
 
 from __future__ import annotations
 
@@ -95,11 +102,29 @@ def load_fitment(data_dir: Path) -> list[VehicleFitment]:
     ]
 
 
+@dataclass(frozen=True)
+class UnitEconomics:
+    cost: float
+    supplier: str
+
+
+def load_unit_economics(data_dir: Path) -> tuple[dict[str, UnitEconomics], float]:
+    """``(cost and supplier by variant id, the default markup fraction)``. Internal-only:
+    nothing in ``StorefrontBackend`` reads this; see the module docstring."""
+    raw = load_json(data_dir, "unit_economics.json")
+    by_variant = {
+        variant_id: UnitEconomics(cost=float(entry["cost"]), supplier=entry["supplier"])
+        for variant_id, entry in raw["variants"].items()
+    }
+    return by_variant, float(raw["default_markup_pct"]) / 100
+
+
 class MockWheels(StorefrontBackend):
     def __init__(self, data_dir: Path = DATA_DIR) -> None:
         catalog, self.products, self.variants = load_catalog(data_dir)
         self.store_name: str = catalog.get("store_name", "the store")
         self._fitment = load_fitment(data_dir)
+        self._unit_economics, self._default_markup = load_unit_economics(data_dir)
         self._users = load_users(data_dir)
         self._orders = load_orders(data_dir)
         self._policies = load_policies(data_dir)
@@ -244,7 +269,7 @@ class MockWheels(StorefrontBackend):
         return self.product(product_id)
 
     # ------------------------------------------------------------------
-    # Disclosures: the fitment and dropship-sourcing facts box
+    # Disclosures: the fitment facts box
     # ------------------------------------------------------------------
 
     async def get_disclosure(
@@ -279,27 +304,47 @@ class MockWheels(StorefrontBackend):
             rows.append(DisclosureRow(label="DOT approved", value=dot))
         if weight := product.specs.get("weight_lbs"):
             rows.append(DisclosureRow(label="Weight", value=f"{weight} lb"))
-        supplier = product.attributes.get("supplier")
-        lead_time = product.attributes.get("lead_time_days")
-        if supplier or lead_time:
-            note = f"{lead_time} business days" if lead_time else None
+        if lead_time := product.attributes.get("lead_time_days"):
             rows.append(
-                DisclosureRow(
-                    label="Ships from",
-                    value=f"{supplier or 'a JDM supplier'} — {product.attributes.get('ships_from', 'Japan (dropship)')}",
-                    note=note,
-                )
+                DisclosureRow(label="Estimated delivery", value=f"{lead_time} business days")
             )
-        if alt := product.attributes.get("alt_supplier_note"):
-            rows.append(DisclosureRow(label="Also available from", value=alt))
         if not rows:
             return None
         return Disclosure(
-            title=f"{listing.title} — fitment & sourcing",
+            title=f"{listing.title} — fitment",
             product_id=product.product_id,
             rows=rows,
-            sources=["ACME Wheels supplier catalog"],
+            sources=["ACME Wheels catalog"],
         )
+
+    # ------------------------------------------------------------------
+    # Internal only: never called by a StorefrontBackend method, so never
+    # reachable from a shopping-agent tool or a customer-facing response.
+    # ------------------------------------------------------------------
+
+    def unit_margin(self, product_id: str) -> dict[str, float | str] | None:
+        """Cost, price, and margin for one variant, for an ops script or a future
+        merchant view — not the shopping agent, which has no way to call this. A
+        variant absent from ``unit_economics.json`` falls back to the catalog-wide
+        default markup on an assumed cost, so every sellable variant prices out
+        positive even before its real landed cost is entered."""
+        product = self.product(product_id)
+        if product is None or product.has_options:
+            return None
+        economics = self._unit_economics.get(product_id)
+        cost = economics.cost if economics else round(product.price / (1 + self._default_markup), 2)
+        supplier = economics.supplier if economics else None
+        margin_usd = round(product.price - cost, 2)
+        margin_pct = round(margin_usd / product.price * 100, 1) if product.price else 0.0
+        result: dict[str, float | str] = {
+            "cost": cost,
+            "price": product.price,
+            "margin_usd": margin_usd,
+            "margin_pct": margin_pct,
+        }
+        if supplier:
+            result["supplier"] = supplier
+        return result
 
     # ------------------------------------------------------------------
     # Cart
@@ -352,7 +397,7 @@ class MockWheels(StorefrontBackend):
         return search_help(self._policies, query)
 
     # ------------------------------------------------------------------
-    # Fulfillment: dropship lead time, not same-day delivery
+    # Fulfillment: each variant's own lead time, not same-day delivery
     # ------------------------------------------------------------------
 
     def _max_lead_days(self, product: ProductDetails) -> int | None:
@@ -370,12 +415,12 @@ class MockWheels(StorefrontBackend):
         return [
             FulfillmentOption(
                 method="shipping",
-                eta=f"{standard} business days (standard dropship from Japan)",
+                eta=f"{standard} business days (standard shipping)",
                 fee=0.0,
             ),
             FulfillmentOption(
                 method="shipping",
-                eta=f"{max(standard // 2, 3)} business days (express air freight)",
+                eta=f"{max(standard // 2, 3)} business days (expedited)",
                 fee=79.0,
             ),
         ]

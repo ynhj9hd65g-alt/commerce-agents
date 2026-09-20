@@ -13,10 +13,10 @@
       "content": "Most wheels in this catalog are bored to 73.1mm, which is larger than many JDM platforms' factory hub (56.1mm on Subaru, 66.1mm on most Nissans). A wheel bored larger than your hub needs a plastic or aluminum hub-centric ring to keep the wheel centered on the hub rather than on the lug bolts alone; each product page states whether one is needed and its size. We ship the correct ring free with any wheel order that needs one. Lug bolts or nuts are not included by default since thread pitch varies by car; add them at checkout if you need them."
     },
     {
-      "policy_id": "dropship-shipping",
-      "title": "Dropship shipping, customs, and lead time",
+      "policy_id": "shipping",
+      "title": "Shipping and lead time",
       "category": "shipping",
-      "content": "Every wheel and tire in this catalog ships from a supplier in Japan rather than a US warehouse, which is why lead times run 5 to 28 days instead of overnight. The price shown already includes duties and customs handling, so there is no surprise bill on delivery. Ordering a wheel and a tire together from the same supplier ships as one box when lead times match; mixed-supplier orders ship separately and each box tracks on its own."
+      "content": "Most sizes ship in 5 to 14 business days; the Raion GT-3 is built to order and runs 21 to 28 days. Each product page states its own lead time, and checkout won't promise a date faster than that. Ordering a wheel and a tire together ships as one box when lead times match; otherwise each ships separately and tracks on its own."
     },
     {
       "policy_id": "street-legality",
@@ -28,7 +28,7 @@
       "policy_id": "returns",
       "title": "Returns and exchanges",
       "category": "returns",
-      "content": "An unmounted, unused wheel or tire can be returned within 30 days of delivery for a full refund minus the original dropship shipping cost. A wheel that was confirmed under the fitment guarantee and still does not fit gets return shipping covered too. Mounted or balanced tires cannot be returned. Because these ship from Japan, a returned item's refund posts once it arrives back at the originating supplier, which itself takes 1 to 3 weeks."
+      "content": "An unmounted, unused wheel or tire can be returned within 30 days of delivery for a full refund minus the original shipping cost. A wheel that was confirmed under the fitment guarantee and still does not fit gets return shipping covered too. Mounted or balanced tires cannot be returned. A returned item's refund posts once it's received and inspected, which can take 1 to 3 weeks for special-order sizes."
     },
     {
       "policy_id": "warranty",

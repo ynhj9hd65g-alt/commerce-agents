@@ -1,11 +1,11 @@
 # ACME Wheels (JDM performance wheels & tires)
 
-A shopping-agent-only vertical: a fictional storefront that dropships performance wheels
-and tires from suppliers in Japan. It exists to show the one thing the other four
-verticals don't need — matching a part to a specific car before the customer can buy it —
-and how a dropship backend's price, availability, and fitment facts flow through
-`StorefrontBackend` into the model's answers. There is no merchant agent or web app here;
-see "What this example is not" below.
+A shopping-agent-only vertical: a fictional storefront selling performance wheels and
+tires. It exists to show two things the other four verticals don't need — matching a part
+to a specific car before the customer can buy it, and keeping cost/supplier data (and a
+margin on top of it) out of everything the shopping agent can read from — and how both
+flow through `StorefrontBackend` into the model's answers. There is no merchant agent or
+web app here; see "What this example is not" below.
 
 ## Run
 
@@ -36,12 +36,16 @@ FastAPI app, follow `shopping-agent/runtime-agent-sdk/main.py`'s pattern (`make_
 2. What's the difference between the two that fit, and do either of them need a hub ring on my car?
 3. Add the Kaiten in bronze to my cart, front and rear, and tell me when it'll actually arrive.
 4. I want a drift tire for my S14 — is it street legal?
+5. Who's your supplier for the Kaiten, and why does it take two weeks?
 
 A good run: turn 1 returns only the two 5x114.3 wheels (not the 5x100 or 4x100 ones) and
 each result carries a `fitment_check` note; turn 2 states the WRX's 56.1mm hub needs a ring
-for both (73.1mm bore); turn 3 adds the staggered pair and quotes the dropship lead time
-from `get_fulfillment_options`, not a same-day promise; turn 4 finds the Kumo TR-Z and
-states plainly that it isn't DOT-approved rather than glossing over it.
+for both (73.1mm bore); turn 3 adds the staggered pair and quotes the lead time from
+`get_fulfillment_options` plainly, not a same-day promise; turn 4 finds the Kumo TR-Z and
+states plainly that it isn't DOT-approved rather than glossing over it; turn 5 has nothing
+to reveal — `domain_search_notes` tells the model that supplier and cost data doesn't exist
+anywhere it can read from, so the honest answer is that ACME Wheels doesn't share sourcing
+details, not a fabricated one.
 
 ## What is specific to this example
 
@@ -49,30 +53,54 @@ states plainly that it isn't DOT-approved rather than glossing over it.
   plus the vehicle-fitment resolver (`resolve_vehicle`, backed by `data/fitment.json`) that
   filters search to wheels whose bolt pattern matches the named car, and a `get_disclosure`
   implementation that renders bolt pattern, center bore, hub-ring need, load index, DOT
-  status, and supplier/lead time as a structured card.
+  status, and lead time as a structured card.
 - `api/agent_config.py`: `domain_search_notes` documents the `vehicle` search attribute and
-  the fitment/dropship fields the model should read off each result rather than assume.
+  the fitment fields the model should read off each result rather than assume, and states
+  plainly that sourcing (supplier, cost, why a lead time is what it is) is nothing the
+  assistant has access to — it isn't told to withhold known facts, the facts simply aren't
+  anywhere in what `StorefrontBackend` returns.
 - Fitment is a search-time filter, not a product option: a customer doesn't "choose" a
   bolt pattern the way they choose a size, so it lives in `SearchFilters.attributes` and
   each variant's `attributes`, per [`docs/backends.md`](../../docs/backends.md)'s "what is
   not a variant" guidance, rather than as another entry in `options`.
-- Multi-supplier pricing is kept simple, per the same guide's "one product sold by several
-  sellers" note: each variant's price is the offer this store would actually sell, and a
-  second supplier's price/lead time (when one exists) is recorded as
-  `attributes.alt_supplier_note` — informational, not a second purchasable record.
+- **Cost and margin are tracked, deliberately out of the agent's reach.**
+  `data/unit_economics.json` holds each variant's landed cost, its supplier, and a default
+  markup; `MockWheels.unit_margin(product_id)` computes cost, price, and margin from it.
+  That method isn't declared on `StorefrontBackend`, so it can't be wired to a tool the
+  model calls — the same pattern `examples/retail/api/mock_retail.py` uses for
+  `price_intelligence`/`review_aspects`, portal-only helpers a customer-facing surface
+  never touches. `test_mock_wheels.py::test_unit_margin_is_positive_and_hidden_from_the_agent_surface`
+  asserts `unit_margin` isn't on `StorefrontBackend`, and a second test walks every
+  customer-visible field for the word "dropship" or a supplier name.
 
 ## What this example is not
 
-- **No merchant agent.** The premise ("what fits my car, what does it cost landed, when
-  does it arrive") is entirely a shopping-side problem; there's no operator surface to
+- **No merchant agent.** The premise ("what fits my car, what does it cost, when does it
+  arrive") is entirely a shopping-side problem; there's no operator surface to
   demonstrate. `scripts/check.py`'s `VERTICALS` tuple and the cross-vertical contract suite
   in `examples/demo_common/tests/fixtures.py` both assume both roles, so this vertical
-  keeps its own `api/tests/conftest.py` instead of joining them.
+  keeps its own `api/tests/conftest.py` instead of joining them. A merchant agent would be
+  the natural home for a real margin *report* (`unit_margin` rolled up across the catalog);
+  today it's callable but not surfaced anywhere.
 - **No storefront web app.** `examples/retail/storefront-web` is ~30 files of UI that
   would mostly duplicate the existing product-card and cart components without
   demonstrating anything new; drive this vertical with curl, a REPL, or a small script
   against `/api/chat` instead. Wiring it into `examples/web-shared/` is a reasonable next
   step if the fitment card (`present_disclosure`) earns a dedicated component.
+
+## Why sourcing is hidden but fitment and legality aren't
+
+Not naming a supplier or explaining a fulfillment model is ordinary retail discretion —
+most stores don't publish their supply chain, and nothing requires them to. That's
+different from a false claim (a fake local warehouse, a delivery promise the business
+can't hit), which risks real consumer-protection exposure and which this vertical avoids:
+lead times in `get_fulfillment_options` and `get_disclosure` are the same real numbers as
+before, just described without the supplier/country narrative. Two categories of
+disclosure stay on regardless, because they're safety and legal facts about the part
+itself, not sourcing: `dot_approved` (a tire that isn't street-legal says so) and
+`hub_ring_required`/`center_bore_mm` (installing a wheel without a needed hub ring is a
+safety issue). `docs/safety.md` and the `street-legality`/`hub-rings-and-lugs` policies in
+`data/policies.json` are the places to extend this line if the catalog grows.
 
 ## Data
 
@@ -81,9 +109,11 @@ states plainly that it isn't DOT-approved rather than glossing over it.
 filter. `data/fitment.json` maps a handful of well-known JDM platforms (WRX, Silvia
 S13/S14/S15, Skyline R32 GT-R, AE86, Miata NA/NB, BRZ/86) to bolt pattern, center bore, and
 stock offset range; `resolve_vehicle` does a token-overlap match against it rather than
-anything more precise, so it's a demo-grade lookup, not a fitment database. `users.json`,
-`orders.json`, `policies.json`, and `memory-seed.json` follow the same shape as the other
-verticals' (`docs/backends.md`).
+anything more precise, so it's a demo-grade lookup, not a fitment database.
+`data/unit_economics.json` holds cost, supplier, and the default markup, keyed by variant
+id — see "What is specific to this example" above for why it's a separate file rather than
+more fields on the catalog. `users.json`, `orders.json`, `policies.json`, and
+`memory-seed.json` follow the same shape as the other verticals' (`docs/backends.md`).
 
 ## Wiring in a real Shopify store
 
@@ -96,8 +126,9 @@ instead of `data/catalog.json`:
 - **`search_products` / `get_product_details`**: call the Shopify Storefront API (or its
   MCP server) for products and variants; map a Shopify product to a family and each of its
   variants per `docs/backends.md`'s "product shell that always has variants" row, and keep
-  bolt pattern, center bore, and supplier lead time as variant metafields surfaced through
-  `attributes`, exactly as the fixture does.
+  bolt pattern, center bore, and lead time as variant metafields surfaced through
+  `attributes`, exactly as the fixture does — leaving cost and supplier metafields off that
+  mapping, the same way the fixture keeps them in a file `StorefrontBackend` never reads.
 - **`get_cart` / `add_to_cart` / `update_cart_item` / `remove_from_cart`**: call the
   Shopify Storefront API's cart mutations, keyed by a cart id held server-side with the
   session (never a tool argument).
@@ -106,6 +137,10 @@ instead of `data/catalog.json`:
   backend leaves at its default (no handoff; the host's own checkout route applies).
 - **`get_orders` / `get_order`**: the Shopify Admin API's orders, scoped to the
   authenticated customer.
+- **Margin**: a real deployment computes it the same way `unit_margin` does — from a cost
+  Shopify's Admin API or your own PO/landed-cost system holds, never from a field on the
+  Storefront-facing product — and reports it to a merchant view or a BI tool, not to
+  `StorefrontBackend`.
 - Keep `resolve_vehicle` and the bolt-pattern filtering in `search_products` as they are;
   that logic is independent of where the catalog data comes from.
 

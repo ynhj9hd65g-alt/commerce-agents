@@ -74,16 +74,69 @@ async def test_add_to_cart_accepts_in_stock_variant(backend, session):
     assert cart.items[0].option_values["finish"] == "Bronze"
 
 
-async def test_get_disclosure_surfaces_fitment_and_sourcing(backend, session):
+async def test_get_disclosure_surfaces_fitment_without_sourcing(backend, session):
     disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-18x95-22-bronze")
     assert disclosure is not None
     labels = {row.label for row in disclosure.rows}
-    assert {"Bolt pattern", "Center bore", "Ships from"} <= labels
+    assert {"Bolt pattern", "Center bore", "Estimated delivery"} <= labels
+    # No row, value, or note may name a supplier or say where the item ships from: that
+    # data lives only in unit_economics.json, which get_disclosure never reads.
+    blob = " ".join(f"{r.label} {r.value} {r.note or ''}" for r in disclosure.rows).lower()
+    for tell in ("supplier", "japan", "dropship", "osaka", "kansai"):
+        assert tell not in blob
 
 
-async def test_fulfillment_reflects_longest_dropship_lead_time(backend, session):
+async def test_fulfillment_reflects_longest_lead_time_without_sourcing_language(backend, session):
     options = await backend.get_fulfillment_options(
         session, ["wheel-kaiten-sf01-18x95-22-bronze", "wheel-raion-gt3-18x95-12-satinblack"]
     )
     standard = next(o for o in options if o.fee == 0.0)
     assert "28" in standard.eta  # the Raion's 21-28 day built-to-order lead time dominates
+    for tell in ("dropship", "japan", "air freight"):
+        assert tell not in standard.eta.lower()
+
+
+def test_unit_margin_is_positive_and_hidden_from_the_agent_surface(backend):
+    margin = backend.unit_margin("wheel-kaiten-sf01-18x95-22-bronze")
+    assert margin is not None
+    assert margin["cost"] < margin["price"]
+    assert margin["margin_usd"] == round(margin["price"] - margin["cost"], 2)
+    assert margin["margin_pct"] > 0
+    assert margin["supplier"] == "Osaka Wheel Supply"
+
+    # unit_margin is not part of StorefrontBackend, so it is unreachable from any tool.
+    from shopping_agent import StorefrontBackend
+
+    assert "unit_margin" not in vars(StorefrontBackend)
+
+
+def test_every_sellable_variant_has_positive_margin(backend):
+    for variant in backend.variants.values():
+        if not variant.in_stock:
+            continue
+        margin = backend.unit_margin(variant.product_id)
+        assert margin is not None and margin["cost"] < margin["price"], variant.product_id
+
+
+async def test_catalog_and_disclosure_never_name_a_supplier(backend, session):
+    """Regression guard for hiding sourcing: nothing reachable from search, details, or
+    disclosures should mention a supplier name or "dropship"."""
+    suppliers = {e.supplier.lower() for e in backend._unit_economics.values()}
+    for product in backend.products.values():
+        haystack = " ".join(
+            [product.title, product.short_description or "", product.long_description or ""]
+            + [f"{k} {v}" for k, v in product.attributes.items()]
+            + [f"{k} {v}" for variant in product.variants for k, v in variant.attributes.items()]
+        ).lower()
+        assert "dropship" not in haystack
+        for supplier in suppliers:
+            assert supplier not in haystack
+        for variant in product.variants or [product]:
+            disclosure = await backend.get_disclosure(session, variant.product_id)
+            if disclosure is None:
+                continue
+            for row in disclosure.rows:
+                text = f"{row.label} {row.value} {row.note or ''}".lower()
+                assert "dropship" not in text
+                for supplier in suppliers:
+                    assert supplier not in text
