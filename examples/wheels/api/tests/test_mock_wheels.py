@@ -106,6 +106,49 @@ async def test_get_disclosure_surfaces_fitment_without_sourcing(backend, session
         assert tell not in blob
 
 
+async def test_disclosure_recommends_ideal_tire_width_before_any_tire_is_picked(backend, session):
+    """A wheel's fitment card states the ideal tire width for it even with an empty cart,
+    per the ask to advise the ideal size for the wheel selected."""
+    disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-18x95-22-bronze")
+    assert disclosure is not None
+    row = next(r for r in disclosure.rows if r.label == "Ideal tire width for this wheel")
+    assert "255" in row.value and "285" in row.value
+
+
+async def test_disclosure_flags_a_diameter_mismatch_between_cart_items(backend, session):
+    """The user's own example: an 18-inch wheel with a 17-inch tire in the cart."""
+    await backend.add_to_cart(session, "wheel-kaiten-sf01-18x95-22-bronze", 1)
+    await backend.add_to_cart(session, "tire-raiden-ps01-225-45-17", 1)
+
+    wheel_disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-18x95-22-bronze")
+    fit_row = next(r for r in wheel_disclosure.rows if r.label.startswith("Fits "))
+    assert fit_row.value == "No — will not mount"
+    assert "18" in fit_row.note and "17" in fit_row.note
+
+    tire_disclosure = await backend.get_disclosure(session, "tire-raiden-ps01-225-45-17")
+    fit_row = next(r for r in tire_disclosure.rows if r.label.startswith("Fits "))
+    assert fit_row.value == "No — will not mount"
+
+
+async def test_disclosure_confirms_an_ideal_width_match_between_cart_items(backend, session):
+    await backend.add_to_cart(session, "wheel-kaiten-sf01-18x95-22-bronze", 1)
+    await backend.add_to_cart(session, "tire-hayate-rtx-265-35-18", 1)
+
+    disclosure = await backend.get_disclosure(session, "wheel-kaiten-sf01-18x95-22-bronze")
+    fit_row = next(r for r in disclosure.rows if r.label.startswith("Fits "))
+    assert fit_row.value == "Yes — ideal"
+
+
+async def test_disclosure_flags_an_acceptable_but_not_ideal_width(backend, session):
+    await backend.add_to_cart(session, "wheel-genroku-r8-15x7-0-silver", 1)
+    await backend.add_to_cart(session, "tire-kumo-trz-drift-195-50-15", 1)
+
+    disclosure = await backend.get_disclosure(session, "wheel-genroku-r8-15x7-0-silver")
+    fit_row = next(r for r in disclosure.rows if r.label.startswith("Fits "))
+    assert fit_row.value == "Marginal — mounts, not ideal"
+    assert "ideal" in fit_row.note.lower()
+
+
 async def test_fulfillment_reflects_longest_lead_time_without_sourcing_language(backend, session):
     options = await backend.get_fulfillment_options(
         session, ["wheel-kaiten-sf01-18x95-22-bronze", "wheel-raion-gt3-18x95-12-satinblack"]

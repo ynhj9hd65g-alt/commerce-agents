@@ -63,6 +63,8 @@ from shopping_agent import (
     UserPreferences,
 )
 
+from .fitment import check_fitment, ideal_tire_widths_for_wheel, parse_wheel_width_in
+
 DATA_DIR = example_data_dir(__file__)
 
 _SEARCH_WEIGHTS = {
@@ -272,10 +274,62 @@ class MockWheels(StorefrontBackend):
     # Disclosures: the fitment facts box
     # ------------------------------------------------------------------
 
+    def _cart_fitment_rows(
+        self, session: ShoppingSessionContext, product: ProductDetails
+    ) -> list[DisclosureRow]:
+        """Fitment facts that depend on what else is in the cart, plus a standing
+        recommendation for a wheel on its own: the tire widths this catalog considers
+        ideal for it, so a customer hears the right size before they've picked a tire at
+        all, not only once they've picked a mismatched one."""
+        rows: list[DisclosureRow] = []
+        if product.category == "wheel":
+            wheel_width = parse_wheel_width_in(product.option_values)
+            if wheel_width is not None:
+                ideal = ideal_tire_widths_for_wheel(wheel_width)
+                value = (
+                    f"{ideal[0]}-{ideal[1]}mm"
+                    if ideal
+                    else "narrower or wider than this catalog's tires"
+                )
+                rows.append(DisclosureRow(label="Ideal tire width for this wheel", value=value))
+            opposite_category = "tire"
+        elif product.category == "tire":
+            opposite_category = "wheel"
+        else:
+            return rows
+
+        for line in self._carts.lines(session.session_id).values():
+            other = self.product(line.product_id)
+            if (
+                other is None
+                or other.category != opposite_category
+                or other.product_id == product.product_id
+            ):
+                continue
+            wheel_of, tire_of = (
+                (product, other) if product.category == "wheel" else (other, product)
+            )
+            verdict = check_fitment(wheel_of.option_values, tire_of.option_values)
+            if verdict is None:
+                continue
+            if not verdict.diameter_match:
+                value = "No — will not mount"
+            elif verdict.width_fit == "ideal":
+                value = "Yes — ideal"
+            elif verdict.width_fit == "acceptable":
+                value = "Marginal — mounts, not ideal"
+            else:
+                value = "Not recommended"
+            rows.append(
+                DisclosureRow(
+                    label=f"Fits {other.title} in your cart?", value=value, note=verdict.summary
+                )
+            )
+        return rows
+
     async def get_disclosure(
         self, session: ShoppingSessionContext, product_id: str
     ) -> Disclosure | None:
-        del session
         product = self.product(product_id)
         if product is None:
             return None
@@ -308,6 +362,7 @@ class MockWheels(StorefrontBackend):
             rows.append(
                 DisclosureRow(label="Estimated delivery", value=f"{lead_time} business days")
             )
+        rows.extend(self._cart_fitment_rows(session, product))
         if not rows:
             return None
         return Disclosure(

@@ -7,6 +7,12 @@
       "content": "Tell us your car's year, make, and model (or its bolt pattern and center bore) before you order and we confirm the wheel fits before it ships. If a wheel we confirmed does not bolt on, we cover return shipping and either refund it or exchange it for one that fits. We cannot guarantee fitment for a car we were not told about, or for a modified suspension (coilovers, camber plates, wide-body fenders) that changes clearance."
     },
     {
+      "policy_id": "tire-sizing",
+      "title": "Matching a tire to your wheel",
+      "category": "fitment",
+      "content": "A tire's diameter (the number after the 'R' in a size like 225/45R17) must exactly match the wheel's diameter; a 17-inch tire cannot be mounted on an 18-inch wheel no matter how close it looks on paper. Width is a range rather than an exact match: every wheel has an ideal tire-width band, and a tire well outside it will balloon on too narrow a wheel or flatten out and expose its sidewall on too wide one, even though it still physically mounts. Ask us or check a product's fitment card for the ideal width before ordering; we'll flag it if what's in your cart doesn't match."
+    },
+    {
       "policy_id": "hub-rings-and-lugs",
       "title": "Hub-centric rings and lug bolts",
       "category": "fitment",

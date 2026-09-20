@@ -38,6 +38,7 @@ FastAPI app, follow `shopping-agent/runtime-agent-sdk/main.py`'s pattern (`make_
 4. I want a drift tire for my S14 — is it street legal?
 5. Who's your supplier for the Kaiten, and why does it take two weeks?
 6. I've got a Hakosuka — what fits it?
+7. I want the Kaiten 18x9.5 up front — what tire width should I run, and does the Raiden 235/40R18 work?
 
 A good run: turn 1 returns the three 5x114.3 wheels (Kaiten, Raion, Kessho — not the 5x100
 Meisho, 4x100 Hachiroku, or 4x114.3 Genroku) each carrying a `fitment_check` note; turn 2
@@ -49,7 +50,10 @@ rather than glossing over it; turn 5 has nothing to reveal — `domain_search_no
 model that supplier and cost data doesn't exist anywhere it can read from, so the honest
 answer is that ACME Wheels doesn't share sourcing details, not a fabricated one; turn 6
 returns only the Genroku R8, sized for the Hakosuka/Kenmeri's own 66.1mm hub rather than the
-73.1mm-bore wheels the rest of the catalog is built around.
+73.1mm-bore wheels the rest of the catalog is built around; turn 7 states the ideal band
+(255-285mm) for the Kaiten's 9.5" width and says the 235mm Raiden is outside it — narrower
+than recommended, not merely a preference — rather than confirming it fits because the
+diameters happen to match.
 
 ## What is specific to this example
 
@@ -58,6 +62,21 @@ returns only the Genroku R8, sized for the Hakosuka/Kenmeri's own 66.1mm hub rat
   filters search to wheels whose bolt pattern matches the named car, and a `get_disclosure`
   implementation that renders bolt pattern, center bore, hub-ring need, load index, DOT
   status, and lead time as a structured card.
+- **`api/fitment.py`: wheel/tire size validation, independent of any catalog data.**
+  Diameter must match exactly — a 17" tire cannot mount on an 18" wheel no matter how close
+  it looks — so `check_fitment` treats that as a hard fail regardless of width. Width is a
+  range: `_RIM_WIDTH_BY_TIRE_MM` is a published tire-width-to-rim-width reference table
+  (section width in mm → minimum, ideal band, and maximum rim width in inches), and
+  `width_fit` classifies a wheel's width against a given tire's width as `ideal`,
+  `acceptable` (mounts, but the tire will balloon on too narrow a wheel or flatten and
+  expose its sidewall on too wide one), or `not_recommended`. `MockWheels.get_disclosure`
+  calls this two ways: on a wheel by itself it always states the ideal tire-width band for
+  it (`ideal_tire_widths_for_wheel`), so a customer hears the right size before picking a
+  tire at all; on either a wheel or a tire that has the other already in the cart, it adds a
+  `Fits <the other item> in your cart?` row with the verdict and, for a mismatch or a
+  marginal fit, the ideal range to aim for instead. `test_fitment.py` covers the size math
+  directly; `test_mock_wheels.py` covers the cart-aware disclosure rows, including the
+  user's own example (an 18" wheel with a 17" tire).
 - `api/agent_config.py`: `domain_search_notes` documents the `vehicle` search attribute and
   the fitment fields the model should read off each result rather than assume, and states
   plainly that sourcing (supplier, cost, why a lead time is what it is) is nothing the
