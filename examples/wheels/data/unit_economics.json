@@ -17,6 +17,14 @@
     "tire-raiden-ps01-245-35-19": {"cost": 180.50, "supplier": "Kansai Tire Import"},
     "tire-kumo-trz-drift-195-50-15": {"cost": 108.00, "supplier": "Kansai Tire Import"},
     "tire-kumo-trz-drift-225-45-17": {"cost": 115.25, "supplier": "Kansai Tire Import"},
-    "tire-kumo-trz-drift-265-35-19": {"cost": 137.00, "supplier": "Kansai Tire Import"}
+    "tire-kumo-trz-drift-265-35-19": {"cost": 137.00, "supplier": "Kansai Tire Import"},
+    "wheel-genroku-r8-14x7-0-silver": {"cost": 152.25, "supplier": "Nara Heritage Imports"},
+    "wheel-genroku-r8-15x7-0-silver": {"cost": 166.75, "supplier": "Nara Heritage Imports"},
+    "wheel-genroku-r8-15x8-0-silver": {"cost": 188.50, "supplier": "Nara Heritage Imports"},
+    "wheel-kessho-monoblock-18x95-38-gunmetal": {"cost": 420.25, "supplier": "Settsu Forge Partners"},
+    "wheel-kessho-monoblock-18x105-22-gunmetal": {"cost": 442.00, "supplier": "Settsu Forge Partners"},
+    "tire-hayate-rtx-225-45-17": {"cost": 187.75, "supplier": "Kansai Tire Import"},
+    "tire-hayate-rtx-245-40-18": {"cost": 209.50, "supplier": "Kansai Tire Import"},
+    "tire-hayate-rtx-265-35-18": {"cost": 231.25, "supplier": "Kansai Tire Import"}
   }
 }

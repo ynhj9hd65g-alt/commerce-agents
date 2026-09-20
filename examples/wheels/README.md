@@ -33,19 +33,23 @@ FastAPI app, follow `shopping-agent/runtime-agent-sdk/main.py`'s pattern (`make_
 ## Try
 
 1. What wheels do you have for a 2020 Subaru WRX?
-2. What's the difference between the two that fit, and do either of them need a hub ring on my car?
+2. Which of those is the lightest, and what do I give up to get it?
 3. Add the Kaiten in bronze to my cart, front and rear, and tell me when it'll actually arrive.
 4. I want a drift tire for my S14 — is it street legal?
 5. Who's your supplier for the Kaiten, and why does it take two weeks?
+6. I've got a Hakosuka — what fits it?
 
-A good run: turn 1 returns only the two 5x114.3 wheels (not the 5x100 or 4x100 ones) and
-each result carries a `fitment_check` note; turn 2 states the WRX's 56.1mm hub needs a ring
-for both (73.1mm bore); turn 3 adds the staggered pair and quotes the lead time from
-`get_fulfillment_options` plainly, not a same-day promise; turn 4 finds the Kumo TR-Z and
-states plainly that it isn't DOT-approved rather than glossing over it; turn 5 has nothing
-to reveal — `domain_search_notes` tells the model that supplier and cost data doesn't exist
-anywhere it can read from, so the honest answer is that ACME Wheels doesn't share sourcing
-details, not a fabricated one.
+A good run: turn 1 returns the three 5x114.3 wheels (Kaiten, Raion, Kessho — not the 5x100
+Meisho, 4x100 Hachiroku, or 4x114.3 Genroku) each carrying a `fitment_check` note; turn 2
+names the Kessho monoblock as lightest and states the real trade-off (not rebuildable like
+the Raion's bolted three-piece, unlike a vague "some assembly differences"); turn 3 adds the
+staggered pair and quotes the lead time from `get_fulfillment_options` plainly, not a
+same-day promise; turn 4 finds the Kumo TR-Z and states plainly that it isn't DOT-approved
+rather than glossing over it; turn 5 has nothing to reveal — `domain_search_notes` tells the
+model that supplier and cost data doesn't exist anywhere it can read from, so the honest
+answer is that ACME Wheels doesn't share sourcing details, not a fabricated one; turn 6
+returns only the Genroku R8, sized for the Hakosuka/Kenmeri's own 66.1mm hub rather than the
+73.1mm-bore wheels the rest of the catalog is built around.
 
 ## What is specific to this example
 
@@ -104,16 +108,30 @@ safety issue). `docs/safety.md` and the `street-legality`/`hub-rings-and-lugs` p
 
 ## Data
 
-`data/catalog.json` has four wheel families and two tire families; three bolt patterns
-(5x114.3, 5x100, 4x100) are deliberately represented so fitment filtering has something to
-filter. `data/fitment.json` maps a handful of well-known JDM platforms (WRX, Silvia
-S13/S14/S15, Skyline R32 GT-R, AE86, Miata NA/NB, BRZ/86) to bolt pattern, center bore, and
-stock offset range; `resolve_vehicle` does a token-overlap match against it rather than
-anything more precise, so it's a demo-grade lookup, not a fitment database.
-`data/unit_economics.json` holds cost, supplier, and the default markup, keyed by variant
-id — see "What is specific to this example" above for why it's a separate file rather than
-more fields on the catalog. `users.json`, `orders.json`, `policies.json`, and
-`memory-seed.json` follow the same shape as the other verticals' (`docs/backends.md`).
+`data/catalog.json` has six wheel families and three tire families, spanning the tiers a
+real curated JDM catalog would carry rather than one flat price point: flow-formed
+(Kaiten), bolted three-piece forged (Raion), forged monoblock (Kessho — the lightest wheel
+in the catalog, at the cost of not being rebuildable like the Raion), direct-fit lightweight
+cast (Meisho, no hub ring needed on its platform), a budget retro mesh (Hachiroku), and a
+period-correct heritage eight-spoke for 1960s-70s classics (Genroku, sized for the Hakosuka/
+Kenmeri rather than a modern platform). Tires run from everyday UHP (Raiden) through a
+DOT-legal trackday step-up (Hayate) to a non-DOT drift compound (Kumo). Four bolt patterns
+(5x114.3, 5x100, 4x100, 4x114.3) are deliberately represented so fitment filtering has
+something to filter. `data/fitment.json` maps a handful of well-known JDM platforms (WRX,
+Silvia S13/S14/S15, Skyline R32 GT-R, Skyline Hakosuka/Kenmeri, AE86, Miata NA/NB, BRZ/86) to
+bolt pattern, center bore, and stock offset range; `resolve_vehicle` does a token-overlap
+match against it rather than anything more precise, so it's a demo-grade lookup, not a
+fitment database. `data/unit_economics.json` holds cost, supplier, and the default markup,
+keyed by variant id — see "What is specific to this example" above for why it's a separate
+file rather than more fields on the catalog. `users.json`, `orders.json`, `policies.json`,
+and `memory-seed.json` follow the same shape as the other verticals' (`docs/backends.md`).
+
+This lineup is a fictional stand-in for a real curation exercise: pulling together
+best-in-tier options across heritage, forged, monoblock, and budget segments so a customer
+picks a car and application rather than hunting brand by brand. The names are invented per
+this repo's `CLAUDE.md` ("no real company, brand, product, or person appears"); a real build
+on this pattern would source that lineup from actual manufacturers and their authorized US
+distributors instead of a single supplier per item.
 
 ## Wiring in a real Shopify store
 

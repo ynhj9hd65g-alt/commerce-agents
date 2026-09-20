@@ -8,7 +8,7 @@ from shopping_agent import SearchFilters, Unavailable
 
 def test_catalog_loads_and_validates(backend):
     assert backend.store_name == "ACME Wheels"
-    assert len(backend.products) == 6
+    assert len(backend.products) == 9
     wheel = backend.products["wheel-kaiten-sf01"]
     assert wheel.category == "wheel"
     assert wheel.variants and all(v.attributes.get("bolt_pattern") for v in wheel.variants)
@@ -41,18 +41,38 @@ def test_resolve_vehicle_matches_and_misses(backend):
 
 
 async def test_search_filters_by_vehicle_bolt_pattern(backend, session):
-    """A WRX (5x114.3) should surface the Kaiten and Raion wheels but not the 5x100 Meisho
-    or the 4x100 Hachiroku, and every returned wheel should carry a fitment_check note."""
+    """A WRX (5x114.3) should surface the Kaiten, Raion, and Kessho wheels but not the
+    5x100 Meisho, the 4x100 Hachiroku, or the 4x114.3 Genroku, and every returned wheel
+    should carry a fitment_check note."""
     fitting = await backend.search_products(
         session, "wheels", SearchFilters(attributes={"vehicle": "2020 Subaru WRX"}), limit=10
     )
     ids = {p.product_id for p in fitting}
     assert "wheel-kaiten-sf01" in ids
     assert "wheel-raion-gt3" in ids
+    assert "wheel-kessho-monoblock" in ids
     assert "wheel-meisho-rpf" not in ids
     assert "wheel-hachiroku-classic" not in ids
+    assert "wheel-genroku-r8" not in ids
     for product in fitting:
         assert "5x114.3" in product.attributes["fitment_check"]
+
+
+async def test_heritage_wheel_fits_hakosuka_without_hub_ring(backend, session):
+    """The Genroku R8 is bored to the Hakosuka/Kenmeri's own 66.1mm hub directly, unlike
+    the modern-platform wheels in this catalog, which all need a ring on that hub."""
+    hakosuka = backend.resolve_vehicle("Nissan Hakosuka")
+    assert hakosuka is not None and hakosuka.bolt_pattern == "4x114.3"
+
+    fitting = await backend.search_products(
+        session, "wheels", SearchFilters(attributes={"vehicle": "Nissan Hakosuka"}), limit=10
+    )
+    ids = {p.product_id for p in fitting}
+    assert ids == {"wheel-genroku-r8"}
+
+    details = await backend.get_product_details(session, "wheel-genroku-r8-14x7-0-silver")
+    assert details is not None
+    assert "No" in details.attributes["hub_ring_required"]
 
 
 async def test_search_by_bolt_pattern_attribute(backend, session):

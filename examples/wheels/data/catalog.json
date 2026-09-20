@@ -337,6 +337,174 @@
           }
         }
       ]
+    },
+    {
+      "product_id": "wheel-genroku-r8",
+      "title": "Genroku R8 Heritage Eight-Spoke Wheel",
+      "brand": "Genroku Wheel Works",
+      "price": 210.0,
+      "currency": "USD",
+      "rating": 4.8,
+      "review_count": 51,
+      "category": "wheel",
+      "labels": ["JDM", "Heritage", "Ultra-lightweight"],
+      "attributes": {
+        "construction": "cast magnesium-alloy",
+        "spoke_style": "8-spoke, thin-spoke heritage design",
+        "made_in": "Japan",
+        "fits": "Nissan Skyline Hakosuka/Kenmeri, classic Datsun/Nissan 4x114.3 platforms"
+      },
+      "short_description": "A period-correct thin-spoke eight-spoke wheel for 1960s-70s Nissan classics. Sold individually.",
+      "long_description": "The R8 keeps the low-offset, thin-spoke look that defined Japanese racing wheels in period, cast from a magnesium alloy for a lighter feel than the modern-platform wheels in this catalog. It is sized for the classics it is built for, not for 2000s-2020s JDM platforms — check fitment before ordering a set for anything newer than a Kenmeri.",
+      "specs": {
+        "warranty": "1-year structural warranty against manufacturing defects"
+      },
+      "variants": [
+        {
+          "product_id": "wheel-genroku-r8-14x7-0-silver",
+          "price": 210.0,
+          "in_stock": true,
+          "option_values": {"diameter": "14\"", "width": "7\"", "offset": "+0mm", "finish": "Silver"},
+          "attributes": {
+            "bolt_pattern": "4x114.3",
+            "center_bore_mm": "66.1",
+            "hub_ring_required": "No; 66.1mm is the direct hub size on Hakosuka/Kenmeri-era Nissans",
+            "lead_time_days": "14-21"
+          },
+          "specs": {"weight_lbs": "11.4", "load_rating_kg": "450"}
+        },
+        {
+          "product_id": "wheel-genroku-r8-15x7-0-silver",
+          "price": 230.0,
+          "in_stock": true,
+          "option_values": {"diameter": "15\"", "width": "7\"", "offset": "+0mm", "finish": "Silver"},
+          "attributes": {
+            "bolt_pattern": "4x114.3",
+            "center_bore_mm": "66.1",
+            "hub_ring_required": "No; 66.1mm is the direct hub size on Hakosuka/Kenmeri-era Nissans",
+            "lead_time_days": "14-21"
+          },
+          "specs": {"weight_lbs": "12.6", "load_rating_kg": "470"}
+        },
+        {
+          "product_id": "wheel-genroku-r8-15x8-0-silver",
+          "price": 260.0,
+          "in_stock": true,
+          "option_values": {"diameter": "15\"", "width": "8\"", "offset": "+0mm", "finish": "Silver"},
+          "attributes": {
+            "bolt_pattern": "4x114.3",
+            "center_bore_mm": "66.1",
+            "hub_ring_required": "No; 66.1mm is the direct hub size on Hakosuka/Kenmeri-era Nissans",
+            "lead_time_days": "14-21",
+            "pairs_with": "The wider rear half of a staggered set with wheel-genroku-r8-15x7-0-silver up front"
+          },
+          "specs": {"weight_lbs": "13.9", "load_rating_kg": "490"}
+        }
+      ]
+    },
+    {
+      "product_id": "wheel-kessho-monoblock",
+      "title": "Kessho Forged Monoblock Wheel",
+      "brand": "Kessho Forged",
+      "price": 580.0,
+      "currency": "USD",
+      "rating": 4.9,
+      "review_count": 44,
+      "category": "wheel",
+      "labels": ["JDM", "Forged", "Monoblock", "Built to order", "Ultra-lightweight"],
+      "attributes": {
+        "construction": "forged monoblock (single-piece)",
+        "spoke_style": "6-spoke Y-spoke",
+        "made_in": "Japan",
+        "fits": "Nissan Silvia S13/S14/S15, Skyline R32 GT-R, Subaru WRX/STI 2015-2021 (5x114.3)"
+      },
+      "short_description": "A single-piece forged wheel, lighter than this catalog's bolted three-piece line at a similar width. Sold individually.",
+      "long_description": "Forging one piece rather than bolting a barrel to a face saves the weight of the hardware, so the monoblock is the lightest wheel in this catalog at a given width — the trade-off against the Raion GT-3 is that a monoblock can't be rebuilt after curb damage or re-barreled for a width change; the whole wheel is replaced instead.",
+      "specs": {
+        "warranty": "2-year structural warranty against manufacturing defects"
+      },
+      "variants": [
+        {
+          "product_id": "wheel-kessho-monoblock-18x95-38-gunmetal",
+          "price": 580.0,
+          "in_stock": true,
+          "option_values": {"diameter": "18\"", "width": "9.5\"", "offset": "+38mm", "finish": "Gunmetal"},
+          "attributes": {
+            "bolt_pattern": "5x114.3",
+            "center_bore_mm": "73.1",
+            "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs",
+            "lead_time_days": "21-28 (built to order)"
+          },
+          "specs": {"weight_lbs": "17.9", "load_rating_kg": "660"}
+        },
+        {
+          "product_id": "wheel-kessho-monoblock-18x105-22-gunmetal",
+          "price": 610.0,
+          "in_stock": true,
+          "option_values": {"diameter": "18\"", "width": "10.5\"", "offset": "+22mm", "finish": "Gunmetal"},
+          "attributes": {
+            "bolt_pattern": "5x114.3",
+            "center_bore_mm": "73.1",
+            "hub_ring_required": "Yes for 56.1mm (Subaru) and 66.1mm (Nissan) hubs",
+            "lead_time_days": "21-28 (built to order)",
+            "pairs_with": "The rear half of the staggered set with wheel-kessho-monoblock-18x95-38-gunmetal up front"
+          },
+          "specs": {"weight_lbs": "19.6", "load_rating_kg": "690"}
+        }
+      ]
+    },
+    {
+      "product_id": "tire-hayate-rtx",
+      "title": "Hayate RT-X Trackday Tire",
+      "brand": "Hayate",
+      "price": 289.0,
+      "currency": "USD",
+      "rating": 4.7,
+      "review_count": 88,
+      "category": "tire",
+      "labels": ["DOT approved", "Track-day"],
+      "attributes": {"compound": "DOT-legal trackday", "made_in": "Japan"},
+      "short_description": "DOT-approved but built for lap times, not commuting; sold and priced individually.",
+      "long_description": "The step up from the Raiden when a car sees the track more than the street: a much softer compound and lower treadwear rating trade everyday mileage and quiet ride for cornering grip. Street-legal, but wears fast at street use and louder than a summer tire.",
+      "specs": {"treadwear": "100", "traction": "AA", "temperature": "A"},
+      "variants": [
+        {
+          "product_id": "tire-hayate-rtx-225-45-17",
+          "price": 259.0,
+          "in_stock": true,
+          "option_values": {"size": "225/45R17"},
+          "attributes": {
+            "load_index": "94",
+            "speed_rating": "Y",
+            "dot_approved": "yes",
+            "lead_time_days": "7-10"
+          }
+        },
+        {
+          "product_id": "tire-hayate-rtx-245-40-18",
+          "price": 289.0,
+          "in_stock": true,
+          "option_values": {"size": "245/40R18"},
+          "attributes": {
+            "load_index": "97",
+            "speed_rating": "Y",
+            "dot_approved": "yes",
+            "lead_time_days": "7-10"
+          }
+        },
+        {
+          "product_id": "tire-hayate-rtx-265-35-18",
+          "price": 319.0,
+          "in_stock": true,
+          "option_values": {"size": "265/35R18"},
+          "attributes": {
+            "load_index": "99",
+            "speed_rating": "Y",
+            "dot_approved": "yes",
+            "lead_time_days": "7-10"
+          }
+        }
+      ]
     }
   ]
 }

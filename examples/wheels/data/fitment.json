@@ -88,6 +88,17 @@
       "center_bore_mm": 54.1,
       "stock_offset_range_mm": [35, 45],
       "notes": "Wheels bored larger than 54.1mm need a hub-centric ring sized to the wheel's bore."
+    },
+    {
+      "make": "Nissan",
+      "model": "Skyline Hakosuka",
+      "aliases": ["C10", "Hakosuka", "Kenmeri", "C110", "Skyline 2000GT"],
+      "year_start": 1968,
+      "year_end": 1977,
+      "bolt_pattern": "4x114.3",
+      "center_bore_mm": 66.1,
+      "stock_offset_range_mm": [10, 30],
+      "notes": "Period-correct wheels run flush to slightly poking at low offset; a 66.1mm-bore wheel is a direct fit, and one bored to 73.1mm needs a 66.1->73.1 hub-centric ring."
     }
   ]
 }
