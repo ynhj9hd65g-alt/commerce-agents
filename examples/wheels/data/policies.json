@@ -1,0 +1,40 @@
+{
+  "policies": [
+    {
+      "policy_id": "fitment-guarantee",
+      "title": "Fitment guarantee",
+      "category": "fitment",
+      "content": "Tell us your car's year, make, and model (or its bolt pattern and center bore) before you order and we confirm the wheel fits before it ships. If a wheel we confirmed does not bolt on, we cover return shipping and either refund it or exchange it for one that fits. We cannot guarantee fitment for a car we were not told about, or for a modified suspension (coilovers, camber plates, wide-body fenders) that changes clearance."
+    },
+    {
+      "policy_id": "hub-rings-and-lugs",
+      "title": "Hub-centric rings and lug bolts",
+      "category": "fitment",
+      "content": "Most wheels in this catalog are bored to 73.1mm, which is larger than many JDM platforms' factory hub (56.1mm on Subaru, 66.1mm on most Nissans). A wheel bored larger than your hub needs a plastic or aluminum hub-centric ring to keep the wheel centered on the hub rather than on the lug bolts alone; each product page states whether one is needed and its size. We ship the correct ring free with any wheel order that needs one. Lug bolts or nuts are not included by default since thread pitch varies by car; add them at checkout if you need them."
+    },
+    {
+      "policy_id": "dropship-shipping",
+      "title": "Dropship shipping, customs, and lead time",
+      "category": "shipping",
+      "content": "Every wheel and tire in this catalog ships from a supplier in Japan rather than a US warehouse, which is why lead times run 5 to 28 days instead of overnight. The price shown already includes duties and customs handling, so there is no surprise bill on delivery. Ordering a wheel and a tire together from the same supplier ships as one box when lead times match; mixed-supplier orders ship separately and each box tracks on its own."
+    },
+    {
+      "policy_id": "street-legality",
+      "title": "Street legality: DOT approval",
+      "category": "compliance",
+      "content": "A tire's product page states whether it is DOT-approved. DOT-approved tires are legal for street use everywhere in the US. Tires marked not DOT-approved (our drift and competition compounds) are built for closed-course track and drift events and are not legal to drive on public roads in most states; check your state's rules before mounting one on a car you plan to drive on the street."
+    },
+    {
+      "policy_id": "returns",
+      "title": "Returns and exchanges",
+      "category": "returns",
+      "content": "An unmounted, unused wheel or tire can be returned within 30 days of delivery for a full refund minus the original dropship shipping cost. A wheel that was confirmed under the fitment guarantee and still does not fit gets return shipping covered too. Mounted or balanced tires cannot be returned. Because these ship from Japan, a returned item's refund posts once it arrives back at the originating supplier, which itself takes 1 to 3 weeks."
+    },
+    {
+      "policy_id": "warranty",
+      "title": "Structural and finish warranty",
+      "category": "warranty",
+      "content": "Every wheel carries the manufacturer's structural warranty listed on its product page (1 or 2 years depending on the line) against manufacturing defects; curb damage, potholes, and track contact are not covered. Finish (clear coat, anodizing) carries a separate, shorter warranty against peeling or discoloration under normal use."
+    }
+  ]
+}

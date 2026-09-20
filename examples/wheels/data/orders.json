@@ -1,0 +1,63 @@
+{
+  "_comment": "In-flight orders (processing/shipped/delayed) are re-dated at load time relative to dates_anchored_to (demo_common.storefront_fixtures.redate_in_flight_orders), so estimates always read current. Author their dates as if dates_anchored_to were today.",
+  "dates_anchored_to": "2026-09-13",
+  "orders": [
+    {
+      "order_id": "AW-40213",
+      "user_id": "demo-user",
+      "status": "shipped",
+      "placed_at": "2026-09-01T18:20:00Z",
+      "items": [
+        {
+          "product_id": "wheel-meisho-rpf-17x9-35-gunmetal",
+          "title": "Meisho RPF-Style Lightweight Track Wheel",
+          "quantity": 4,
+          "price": 189.0,
+          "option_values": {"diameter": "17\"", "width": "9\"", "offset": "+35mm", "finish": "Gunmetal"},
+          "variant_of": "wheel-meisho-rpf"
+        }
+      ],
+      "total": 756.0,
+      "estimated_delivery": "2026-09-14",
+      "tracking_url": "https://track.example.com/AW-40213"
+    },
+    {
+      "order_id": "AW-39880",
+      "user_id": "demo-user",
+      "status": "delayed",
+      "placed_at": "2026-08-19T10:05:00Z",
+      "items": [
+        {
+          "product_id": "tire-raiden-ps01-235-40-18",
+          "title": "Raiden PS-01 Ultra-High-Performance Summer Tire",
+          "quantity": 4,
+          "price": 219.0,
+          "option_values": {"size": "235/40R18"},
+          "variant_of": "tire-raiden-ps01"
+        }
+      ],
+      "total": 876.0,
+      "estimated_delivery": "2026-09-05",
+      "tracking_url": "https://track.example.com/AW-39880"
+    },
+    {
+      "order_id": "AW-38104",
+      "user_id": "demo-user-2",
+      "status": "delivered",
+      "placed_at": "2026-07-02T12:00:00Z",
+      "items": [
+        {
+          "product_id": "tire-kumo-trz-drift-225-45-17",
+          "title": "Kumo TR-Z Drift Compound Tire",
+          "quantity": 4,
+          "price": 159.0,
+          "option_values": {"size": "225/45R17"},
+          "variant_of": "tire-kumo-trz-drift"
+        }
+      ],
+      "total": 636.0,
+      "estimated_delivery": "2026-07-16",
+      "tracking_url": "https://track.example.com/AW-38104"
+    }
+  ]
+}

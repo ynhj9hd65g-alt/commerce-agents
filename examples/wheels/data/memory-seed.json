@@ -1,0 +1,6 @@
+{
+  "demo-user": [
+    {"key": "vehicle", "value": "2020 Subaru WRX (5x114.3, 56.1mm bore); daily-driven and autocrossed", "category": "context", "updated_at": "2026-08-20T15:10:00Z"},
+    {"key": "fitment_preference", "value": "wants a flush look but keeps the factory fender liners — no stretch, no rubbing", "category": "constraint", "updated_at": "2026-08-28T21:30:00Z"}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "user_id": "demo-user",
+      "display_name": "Jamie",
+      "loyalty_tier": "Guest",
+      "default_location": "Portland",
+      "preferences": {
+        "car": "2020 Subaru WRX, daily-driven and autocrossed on weekends",
+        "budget": "value-focused but willing to pay more for forged over cast",
+        "style": "flush, not stretched; keeps the factory fender liners"
+      }
+    },
+    {
+      "user_id": "demo-user-2",
+      "display_name": "Kenji",
+      "loyalty_tier": "Guest",
+      "default_location": "Los Angeles",
+      "preferences": {
+        "car": "Nissan Silvia S14 built for grip driving events, not street-driven",
+        "interests": "drift/grip day setups, semi-slick tires"
+      }
+    }
+  ]
+}

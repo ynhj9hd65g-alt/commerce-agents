@@ -127,6 +127,7 @@ the MCP servers bind to loopback.
 | [`examples/travel/`](examples/travel/) ACME Travel | Date-bound inventory and a `present_itinerary` extension | Occupancy calendar and date-window rate moves |
 | [`examples/telecom/`](examples/telecom/) ACME Mobile | Account context, plan matrix, server-authored fee disclosures | Plan mix, price moves that state the lines affected, protected regulated fees |
 | [`examples/entertainment/`](examples/entertainment/) ACME Tickets | Timed holds, waitlists, transfers, venue map, all-in fee disclosures | Event pacing, hold releases that add real capacity, fee-preserving price moves |
+| [`examples/wheels/`](examples/wheels/) ACME Wheels | Vehicle-fitment search filtering, dropship lead time, fitment/sourcing disclosures | *(none — shopping-only)* |
 
 Each example's README has a `Try` section: the turns `scripts/smoke_chat.py` runs, and single
 prompts with what a good answer does.
